@@ -3,3 +3,9 @@
 @theme {
   /* Customize theme values here if needed */
 }
+
+@import "./styles/createment-theme.css";
+
+/* Print: A4 landscape, one week per page */
+@page { size: A4 landscape; margin: 12mm; }
+.print\:break-after-page { break-after: page; }
