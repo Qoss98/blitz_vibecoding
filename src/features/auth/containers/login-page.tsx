@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { signInWithEmailPassword } from '@/dal/auth';
 
 export function LoginPage() {
@@ -56,6 +56,9 @@ export function LoginPage() {
               {submitting ? 'Bezig...' : 'Inloggen'}
             </button>
           </form>
+          <div className="text-sm text-gray-400 text-center">
+            Nog geen account? <Link to="/signup" className="text-blue-400 hover:underline">Registreren</Link>
+          </div>
         </div>
       </div>
     </main>

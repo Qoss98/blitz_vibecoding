@@ -4,6 +4,7 @@ import { SchedulePage } from './features/schedule/containers/schedule-page';
 import { AppProviders } from './features/auth/containers/auth-provider';
 import { RequireAuth } from './features/auth/containers/require-auth';
 import { LoginPage } from './features/auth/containers/login-page';
+import { SignupPage } from './features/auth/containers/signup-page';
 import { PlansOverviewPage } from './features/plans/containers/plans-overview-page';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             <Route
               path="/plans"
               element={

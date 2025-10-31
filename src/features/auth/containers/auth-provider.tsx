@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { getCurrentUser, signOut as dalSignOut } from '@/dal/auth';
+import { ensureTalentManagerExists } from '@/dal/programs';
 
 type AuthContextValue = {
   user: { id: string; email: string } | null;
@@ -32,8 +33,12 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
     let mounted = true;
     
     // Initial load
-    getCurrentUser().then((u) => {
+    getCurrentUser().then(async (u) => {
       if (mounted) {
+        // Ensure talent_manager exists for logged-in user
+        if (u?.email) {
+          await ensureTalentManagerExists(u.email);
+        }
         setUser(u);
         setLoading(false);
       }
@@ -43,6 +48,12 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
     const sub = supabase?.auth.onAuthStateChange(async (event) => {
       if (!mounted) return;
       const u = await getCurrentUser();
+      
+      // If user just signed in, ensure talent_manager record exists
+      if (event === 'SIGNED_IN' && u?.email) {
+        await ensureTalentManagerExists(u.email);
+      }
+      
       setUser(u);
       setLoading(false);
       

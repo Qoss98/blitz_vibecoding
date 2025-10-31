@@ -8,11 +8,12 @@ export async function getManagerIdByEmail(email: string): Promise<string | null>
       .from('talent_managers')
       .select('id')
       .eq('email', email)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to avoid PGRST116 error when 0 rows
     if (error) {
-      // Don't log 406 errors (Not Acceptable) - these might happen during logout
+      // Don't log 406 errors (Not Acceptable) or PGRST116 (0 rows) - these are expected
       const status = (error as any).status || (error as any).code;
-      if (status !== 406) {
+      const errorCode = error.code;
+      if (status !== 406 && errorCode !== 'PGRST116') {
         console.error('Error getting manager ID:', error);
       }
       return null;
@@ -31,11 +32,12 @@ export async function getManagerNameByEmail(email: string): Promise<string | nul
       .from('talent_managers')
       .select('name')
       .eq('email', email)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to avoid PGRST116 error when 0 rows
     if (error) {
-      // Don't log 406 errors (Not Acceptable) - these might happen during logout
+      // Don't log 406 errors (Not Acceptable) or PGRST116 (0 rows) - these are expected
       const status = (error as any).status || (error as any).code;
-      if (status !== 406) {
+      const errorCode = error.code;
+      if (status !== 406 && errorCode !== 'PGRST116') {
         console.error('Error getting manager name:', error);
       }
       return null;
@@ -68,6 +70,61 @@ export async function listProgramsForManager(managerId: string): Promise<Program
   } catch (error) {
     console.error('Exception listing programs:', error);
     return [];
+  }
+}
+
+export async function ensureTalentManagerExists(email: string, name?: string): Promise<string | null> {
+  if (!supabase) return null;
+  
+  try {
+    // First check if manager already exists
+    const existing = await getManagerIdByEmail(email);
+    if (existing) return existing;
+    
+    // If no name provided, derive from email (e.g., "john.doe@example.com" -> "John Doe")
+    let managerName = name;
+    if (!managerName) {
+      const emailPart = email.split('@')[0];
+      // Capitalize first letter of each part
+      managerName = emailPart
+        .split(/[._-]/)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ');
+    }
+    
+    const { data, error } = await supabase
+      .from('talent_managers')
+      .insert({
+        email,
+        name: managerName,
+        role: 'talent_manager',
+      })
+      .select('id')
+      .single();
+    
+    if (error) {
+      // Don't log expected errors:
+      // - 406: Not Acceptable (might happen during logout)
+      // - 23505: Duplicate key (race condition - manager was created by another request)
+      const status = (error as any).status || (error as any).code;
+      const errorCode = error.code;
+      if (status !== 406 && errorCode !== '23505') {
+        console.error('Error creating talent manager:', error);
+      }
+      
+      // If duplicate key error, try to fetch the existing manager
+      if (errorCode === '23505') {
+        const existing = await getManagerIdByEmail(email);
+        return existing;
+      }
+      
+      return null;
+    }
+    
+    return data?.id ?? null;
+  } catch (error) {
+    console.error('Exception creating talent manager:', error);
+    return null;
   }
 }
 
