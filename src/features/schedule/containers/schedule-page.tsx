@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { DEFAULT_TIME_LABEL } from '../../../types/schedule';
 import type { ScheduleState, TrainingDay } from '../../../types/schedule';
 import type { DayFields } from '../../../types/schedule';
@@ -11,7 +11,7 @@ import { SidebarPanel } from '../components/sidebar-panel';
 import { TemplatesManager } from '../components/templates-manager';
 import { Modal } from '../../../components/modal';
 import { useAuth } from '../../auth/containers/auth-provider';
-import { getManagerNameByEmail } from '../../../dal/programs';
+import { getManagerNameByEmail, deleteProgramByTraineeEmail } from '../../../dal/programs';
 
 async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
   const startMonday = firstMondayOfMonth(start);
@@ -44,6 +44,7 @@ async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
 
 export const SchedulePage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   
   const [metaTitle, setMetaTitle] = useState('');
@@ -175,6 +176,7 @@ export const SchedulePage: React.FC = () => {
   const [pendingApply, setPendingApply] = useState<Partial<DayFields> | null>(null);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [templateSaveFields, setTemplateSaveFields] = useState<DayFields | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const openEdit = () => setSidebarOpen(true);
 
@@ -252,6 +254,22 @@ export const SchedulePage: React.FC = () => {
   const printWeeks = () => {
     window.print();
   };
+
+  const handleDelete = async () => {
+    if (!metaTraineeEmail) return;
+    
+    const success = await deleteProgramByTraineeEmail(metaTraineeEmail);
+    if (success) {
+      alert('Programma verwijderd!');
+      navigate('/plans');
+    } else {
+      alert('Fout bij verwijderen van programma');
+    }
+    setDeleteConfirmOpen(false);
+  };
+
+  const isNewSchedule = location.pathname === '/schedule/new';
+  const hasExistingSchedule = !isNewSchedule && metaTraineeEmail;
 
   return (
     <main className="container section">
@@ -335,6 +353,19 @@ export const SchedulePage: React.FC = () => {
               <button className="btn btn-ghost" onClick={openEdit} disabled={selectedIds.length === 0}>Bewerken ({selectedIds.length})</button>
               <button className="btn btn-ghost" onClick={printWeeks}>Exporteer PDF</button>
               <button className="btn btn-primary" onClick={saveAll}>Opslaan</button>
+              {hasExistingSchedule && (
+                <button 
+                  className="btn" 
+                  onClick={() => setDeleteConfirmOpen(true)}
+                  style={{ 
+                    background: '#dc2626', 
+                    color: '#ffffff',
+                    border: '1px solid #dc2626'
+                  }}
+                >
+                  Verwijderen
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -412,6 +443,36 @@ export const SchedulePage: React.FC = () => {
           )}
         >
           <p>Je staat op het punt gegevens van geselecteerde dagen te overschrijven. Weet je het zeker?</p>
+        </Modal>
+
+        <Modal
+          open={deleteConfirmOpen}
+          title="Programma verwijderen"
+          onClose={() => setDeleteConfirmOpen(false)}
+          actions={(
+            <>
+              <button className="btn btn-ghost" onClick={() => setDeleteConfirmOpen(false)}>Annuleren</button>
+              <button 
+                className="btn" 
+                onClick={handleDelete}
+                style={{ 
+                  background: '#dc2626', 
+                  color: '#ffffff',
+                  border: '1px solid #dc2626'
+                }}
+              >
+                Verwijderen
+              </button>
+            </>
+          )}
+        >
+          <p>Weet je zeker dat je dit programma wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</p>
+          {metaTitle && (
+            <p className="text-gray-400 mt-2">Programma: <strong>{metaTitle}</strong></p>
+          )}
+          {metaTraineeEmail && (
+            <p className="text-gray-400">Trainee: <strong>{metaTraineeEmail}</strong></p>
+          )}
         </Modal>
       </div>
     </main>

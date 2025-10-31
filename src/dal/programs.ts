@@ -70,3 +70,47 @@ export async function listProgramsForManager(managerId: string): Promise<Program
     return [];
   }
 }
+
+export async function deleteProgramByTraineeEmail(traineeEmail: string): Promise<boolean> {
+  if (!supabase) return false;
+  try {
+    // First get the program ID to delete training days
+    const { data: program, error: fetchError } = await supabase
+      .from('programs')
+      .select('id')
+      .eq('trainee_email', traineeEmail)
+      .single();
+
+    if (fetchError || !program) {
+      console.error('Error fetching program for deletion:', fetchError);
+      return false;
+    }
+
+    // Delete training days first (though CASCADE should handle this)
+    const { error: daysError } = await supabase
+      .from('training_days')
+      .delete()
+      .eq('program_id', program.id);
+
+    if (daysError) {
+      console.error('Error deleting training days:', daysError);
+      // Continue with program deletion even if days deletion fails
+    }
+
+    // Delete the program
+    const { error: deleteError } = await supabase
+      .from('programs')
+      .delete()
+      .eq('trainee_email', traineeEmail);
+
+    if (deleteError) {
+      console.error('Error deleting program:', deleteError);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Exception deleting program:', error);
+    return false;
+  }
+}
