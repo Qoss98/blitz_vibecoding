@@ -395,6 +395,14 @@ input::placeholder, textarea::placeholder { color: var(--brand-gray-300); }
   border-color: #0B35F4 !important;
 }
 
+.border-purple {
+  border-color: var(--brand-purple) !important;
+}
+
+.border-pink {
+  border-color: #FF1493 !important; /* Bright pink/fuchsia for high contrast */
+}
+
 /* Gradient background for PDF header */
 .pdf-header-gradient {
   background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-purple) 100%);
