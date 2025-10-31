@@ -1,14 +1,28 @@
 import { supabase } from './client';
 import type { Program, ProgramInsert, TrainingDay, TrainingDayInsert, TalentManager } from '../../types/database';
 import type { DayFields, ScheduleState } from '../../types/schedule';
-import { toIsoDate } from '../../utils/date';
+import { toIsoDate, fromIsoDate, isWeekend } from '../../utils/date';
+import { fetchDutchHolidays, getHolidayName } from '../../utils/holidays';
+
+type Holiday = {
+  date: string;
+  localName: string;
+  name: string;
+};
 
 // Convert database TrainingDay to app TrainingDay
-function dbDayToAppDay(dbDay: TrainingDay, dateStr: string): import('../../types/schedule').TrainingDay {
+async function dbDayToAppDay(dbDay: TrainingDay, dateStr: string, holidays: { [year: number]: Holiday[] }): Promise<import('../../types/schedule').TrainingDay> {
+  const date = fromIsoDate(dateStr);
+  const year = date.getFullYear();
+  const yearHolidays = holidays[year] || [];
+  const weekend = isWeekend(date);
+  const holiday = !weekend && yearHolidays.length > 0 ? getHolidayName(date, yearHolidays) : null;
+  
   return {
     id: dateStr,
     date: dateStr,
     isWeekend: dbDay.is_weekend,
+    holidayName: holiday || undefined,
     fields: dbDay.is_weekend ? undefined : (dbDay.subject || dbDay.modality || dbDay.trainer ? {
       subject: dbDay.subject || '',
       modality: (dbDay.modality || '') as DayFields['modality'],
@@ -73,8 +87,20 @@ export async function loadProgramFromSupabase(traineeEmail: string): Promise<Sch
       managerName = manager?.name ?? '';
     }
 
+    // Fetch holidays for the years in the schedule
+    const years = new Set<number>();
+    days.forEach((d) => {
+      const year = parseInt(d.date.split('-')[0]);
+      years.add(year);
+    });
+    
+    const holidaysMap: { [year: number]: Holiday[] } = {};
+    await Promise.all(Array.from(years).map(async (year) => {
+      holidaysMap[year] = await fetchDutchHolidays(year);
+    }));
+
     // Convert to app format
-    const appDays = days.map((d) => dbDayToAppDay(d, d.date));
+    const appDays = await Promise.all(days.map((d) => dbDayToAppDay(d, d.date, holidaysMap)));
 
     return {
       meta: {

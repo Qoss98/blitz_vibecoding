@@ -4,7 +4,7 @@ import type { ScheduleState, TrainingDay } from '../../../types/schedule';
 import type { DayFields } from '../../../types/schedule';
 import { computeEndDate, eachDayInclusive, firstMondayOfMonth, formatDateNL, isWeekend, toIsoDate } from '../../../utils/date';
 import { loadSchedule, saveSchedule } from '../../../lib/storage';
-import { prefetchHolidaysForRange, fetchDutchHolidays, isHoliday } from '../../../utils/holidays';
+import { prefetchHolidaysForRange, fetchDutchHolidays, isHoliday, getHolidayName } from '../../../utils/holidays';
 import { WeekGrid } from '../components/week-grid';
 import { SidebarPanel } from '../components/sidebar-panel';
 import { TemplatesManager } from '../components/templates-manager';
@@ -27,10 +27,12 @@ async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
     const iso = toIsoDate(d);
     const weekend = isWeekend(d);
     const holiday = !weekend && isHoliday(d, holidays);
+    const holidayName = holiday ? getHolidayName(d, holidays) : undefined;
     return {
       id: iso,
       date: iso,
       isWeekend: weekend || holiday, // Mark holidays as non-training days (weekend-like)
+      holidayName: holidayName || undefined,
       fields: (weekend || holiday) ? undefined : undefined,
     } satisfies TrainingDay;
   });

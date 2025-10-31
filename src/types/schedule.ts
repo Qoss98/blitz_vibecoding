@@ -13,6 +13,7 @@ export interface TrainingDay {
   id: string; // yyyy-MM-dd
   date: string; // ISO date yyyy-MM-dd
   isWeekend: boolean;
+  holidayName?: string; // Name of the holiday if this day is a holiday
   fields?: DayFields; // undefined for weekends or unfilled days
 }
 

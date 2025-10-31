@@ -39,7 +39,7 @@ export const WeekGrid: React.FC<Props> = ({ weekDays, selectedIds, onToggleSelec
               {formatDateNL(new Date(d.date), { weekday: 'short', day: '2-digit', month: '2-digit' })}
             </div>
             {d.isWeekend ? (
-              <div className="text-xs text-gray-300">Weekend</div>
+              <div className="text-xs text-gray-300">{d.holidayName || 'Weekend'}</div>
             ) : (
               <div className="space-y-1 text-sm">
                 <div className="font-semibold truncate">{d.fields?.subject || '—'}</div>

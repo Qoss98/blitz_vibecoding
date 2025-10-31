@@ -44,6 +44,12 @@ export function isHoliday(date: Date, holidays: Holiday[]): boolean {
   return holidays.some((h) => h.date === dateStr);
 }
 
+export function getHolidayName(date: Date, holidays: Holiday[]): string | null {
+  const dateStr = toIsoDate(date); // Use local time instead of UTC
+  const holiday = holidays.find((h) => h.date === dateStr);
+  return holiday ? holiday.localName : null;
+}
+
 // Pre-fetch holidays for a date range (useful when generating schedules)
 export async function prefetchHolidaysForRange(startDate: Date, endDate: Date): Promise<void> {
   const startYear = startDate.getFullYear();
