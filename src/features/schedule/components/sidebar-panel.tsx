@@ -8,6 +8,7 @@ type Props = {
   initial?: DayFields;
   onClose: () => void;
   onApply: (values: Partial<DayFields>) => void;
+  onLoadTemplate?: (fields: DayFields) => void;
 };
 
 const MAX = {
@@ -18,7 +19,7 @@ const MAX = {
   customLocation: 100,
 };
 
-export const SidebarPanel: React.FC<Props> = ({ open, selectionCount, initial, onClose, onApply }) => {
+export const SidebarPanel: React.FC<Props> = ({ open, selectionCount, initial, onClose, onApply, onLoadTemplate }) => {
   const [subject, setSubject] = useState('');
   const [modality, setModality] = useState<Modality>('');
   const [trainer, setTrainer] = useState('');
@@ -113,6 +114,25 @@ export const SidebarPanel: React.FC<Props> = ({ open, selectionCount, initial, o
           {errors.notes && <span className="text-red-400 text-sm">{errors.notes}</span>}
         </label>
 
+        {onLoadTemplate && (
+          <button
+            className="btn btn-ghost w-full"
+            onClick={() => {
+              // Open templates manager - will be handled by parent
+              const currentFields: DayFields = {
+                subject,
+                modality,
+                trainer,
+                shortDescription: shortDescription || undefined,
+                notes: notes || undefined,
+                customLocation: showCustom ? customLocation : undefined,
+              };
+              onLoadTemplate(currentFields);
+            }}
+          >
+            Templates beheren
+          </button>
+        )}
         <div className="cta-bar pt-8">
           <button className="btn btn-primary" disabled={disabled} onClick={handleApply}>Toepassen</button>
           <button className="btn btn-ghost" onClick={onClose}>Annuleren</button>

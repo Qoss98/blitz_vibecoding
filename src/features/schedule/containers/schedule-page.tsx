@@ -1,23 +1,37 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { DEFAULT_TIME_LABEL } from '../../../types/schedule';
-import type { DayFields, ScheduleState, TrainingDay } from '../../../types/schedule';
+import type { ScheduleState, TrainingDay } from '../../../types/schedule';
+import type { DayFields } from '../../../types/schedule';
 import { computeEndDate, eachDayInclusive, firstMondayOfMonth, formatDateNL, isWeekend, toIsoDate } from '../../../utils/date';
 import { loadSchedule, saveSchedule } from '../../../lib/storage';
+import { prefetchHolidaysForRange, fetchDutchHolidays, isHoliday } from '../../../utils/holidays';
 import { WeekGrid } from '../components/week-grid';
 import { SidebarPanel } from '../components/sidebar-panel';
+import { TemplatesManager } from '../components/templates-manager';
 import { Modal } from '../../../components/modal';
 
-function buildInitialDays(start: Date): TrainingDay[] {
+async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
   const startMonday = firstMondayOfMonth(start);
   const end = computeEndDate(startMonday);
+  
+  // Fetch holidays for the date range
+  await prefetchHolidaysForRange(startMonday, end);
+  const year = startMonday.getFullYear();
+  const holidays = await fetchDutchHolidays(year);
+  if (end.getFullYear() !== year) {
+    const nextYearHolidays = await fetchDutchHolidays(end.getFullYear());
+    holidays.push(...nextYearHolidays);
+  }
+  
   const days = eachDayInclusive(startMonday, end).map((d) => {
     const iso = toIsoDate(d);
     const weekend = isWeekend(d);
+    const holiday = !weekend && isHoliday(d, holidays);
     return {
       id: iso,
       date: iso,
-      isWeekend: weekend,
-      fields: weekend ? undefined : undefined,
+      isWeekend: weekend || holiday, // Mark holidays as non-training days (weekend-like)
+      fields: (weekend || holiday) ? undefined : undefined,
     } satisfies TrainingDay;
   });
   return days;
@@ -32,14 +46,34 @@ export const SchedulePage: React.FC = () => {
 
   const [dateInput, setDateInput] = useState<string>('');
 
-  const [days, setDays] = useState<TrainingDay[]>(() => {
-    const loaded = loadSchedule();
-    if (loaded) return loaded.days;
-    const now = new Date();
-    return buildInitialDays(now);
-  });
+  const [days, setDays] = useState<TrainingDay[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [selectedIds, setSelectedIds] = useState<string[]>(() => loadSchedule()?.selectedIds ?? []);
+  // Load schedule on mount
+  useEffect(() => {
+    async function load() {
+      setIsLoading(true);
+      const traineeEmail = metaTrainee || undefined;
+      const loaded = await loadSchedule(traineeEmail);
+      if (loaded) {
+        setDays(loaded.days);
+        setMetaTitle(loaded.meta.title);
+        setMetaTrainee(loaded.meta.traineeName);
+        setMetaManager(loaded.meta.talentManager);
+        setMetaCohort(loaded.meta.cohort || '');
+        setMetaRemarks(loaded.meta.remarks || '');
+      } else {
+        // Initialize with empty days if no data found
+        const now = new Date();
+        const initialDays = await buildInitialDays(now);
+        setDays(initialDays);
+      }
+      setIsLoading(false);
+    }
+    load();
+  }, []); // Only run on mount
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const lastSelectedRef = useRef<string | null>(null);
 
   const startDate = useMemo(() => (days.length ? new Date(days[0].date) : new Date()), [days]);
@@ -59,13 +93,15 @@ export const SchedulePage: React.FC = () => {
     return out;
   }, [days]);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!dateInput) return;
+    setIsLoading(true);
     const inputDate = new Date(dateInput);
     const firstMon = firstMondayOfMonth(inputDate);
-    const newDays = buildInitialDays(firstMon);
+    const newDays = await buildInitialDays(firstMon);
     setDays(newDays);
     setSelectedIds([]);
+    setIsLoading(false);
   };
 
   const toggleSelect = (id: string, withRange: boolean, multi: boolean) => {
@@ -89,6 +125,8 @@ export const SchedulePage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingApply, setPendingApply] = useState<Partial<DayFields> | null>(null);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [templateSaveFields, setTemplateSaveFields] = useState<DayFields | null>(null);
 
   const openEdit = () => setSidebarOpen(true);
 
@@ -145,7 +183,7 @@ export const SchedulePage: React.FC = () => {
     setPendingApply(null);
   };
 
-  const saveAll = () => {
+  const saveAll = async () => {
     const meta = {
       title: metaTitle,
       traineeName: metaTrainee,
@@ -157,7 +195,9 @@ export const SchedulePage: React.FC = () => {
     };
     const payload: ScheduleState = { meta, days, selectedIds };
     // Overwrite warning is handled at apply stage; save directly
-    saveSchedule(payload);
+    await saveSchedule(payload);
+    // Show success feedback (optional - can add toast/notification later)
+    alert('Programma opgeslagen!');
   };
 
   const printWeeks = () => {
@@ -188,7 +228,7 @@ export const SchedulePage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {week.map((day, colIdx) => (
+                {week.map((day) => (
                   <tr key={day.id} style={day.isWeekend ? { background: '#e9e9e9', color: '#888' } : {}}>
                     <td style={{ border: '1px solid #000', padding: '4px 8px', textAlign: 'center' }}>{
                       new Date(day.date).toLocaleDateString('nl-NL', { weekday: 'short', day: '2-digit', month: '2-digit' })
@@ -242,6 +282,11 @@ export const SchedulePage: React.FC = () => {
           </div>
         </div>
 
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="text-gray-400">Laden...</div>
+        </div>
+      ) : (
         <div className="space-y-6 print:space-y-0">
           {weeks.map((week, idx) => (
             <section key={idx} className="space-y-2 print:break-after-page">
@@ -250,13 +295,40 @@ export const SchedulePage: React.FC = () => {
             </section>
           ))}
         </div>
+      )}
 
-        <SidebarPanel
-          open={sidebarOpen}
-          selectionCount={selectedIds.length}
-          onClose={() => setSidebarOpen(false)}
-          onApply={applySidebar}
-        />
+      <SidebarPanel
+        open={sidebarOpen}
+        selectionCount={selectedIds.length}
+        onClose={() => setSidebarOpen(false)}
+        onApply={applySidebar}
+        onLoadTemplate={(fields) => {
+          setTemplateSaveFields(fields);
+          setTemplatesOpen(true);
+        }}
+      />
+
+      <TemplatesManager
+        open={templatesOpen}
+        onClose={() => {
+          setTemplatesOpen(false);
+          setTemplateSaveFields(null);
+        }}
+        onSelectTemplate={(fields) => {
+          // Load template into sidebar form
+          const partial: Partial<DayFields> = {
+            subject: fields.subject,
+            modality: fields.modality,
+            trainer: fields.trainer,
+            shortDescription: fields.shortDescription,
+            notes: fields.notes,
+            customLocation: fields.customLocation,
+          };
+          applySidebar(partial);
+        }}
+        fieldsToSave={templateSaveFields}
+        currentTalentManagerId={metaManager || undefined}
+      />
 
         <Modal
           open={confirmOpen}
