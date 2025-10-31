@@ -1,4 +1,6 @@
 // Free API: https://date.nager.at - supports Netherlands holidays
+import { toIsoDate } from './date';
+
 const HOLIDAYS_API_BASE = 'https://date.nager.at/api/v3';
 
 interface Holiday {
@@ -38,7 +40,7 @@ export async function fetchDutchHolidays(year: number): Promise<Holiday[]> {
 }
 
 export function isHoliday(date: Date, holidays: Holiday[]): boolean {
-  const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+  const dateStr = toIsoDate(date); // Use local time instead of UTC
   return holidays.some((h) => h.date === dateStr);
 }
 
