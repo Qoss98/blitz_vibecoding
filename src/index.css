@@ -7,5 +7,52 @@
 @import "./styles/createment-theme.css";
 
 /* Print: A4 landscape, one week per page */
-@page { size: A4 landscape; margin: 12mm; }
-.print\:break-after-page { break-after: page; }
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  /* Show print-only content */
+  .print-only-export {
+    display: block !important;
+    background: #fff !important;
+    color: #000 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .print-week-page {
+    page-break-after: always !important;
+  }
+  /* Hide all UI elements */
+  .print\:hidden,
+  header, .card, .btn, input, textarea, select, button, 
+  .card-body, .row, .heading-xl, .heading-lg, .heading-xxl,
+  .lead, .col, .sidebar, .nav, .footer, .cta-bar, .divider,
+  .eyebrow, .bg-black, .bg-blue, .border-blitz, .shadow-xl {
+    display: none !important;
+  }
+  /* Ensure table is visible and styled for print */
+  .print-only-export table {
+    display: table !important;
+    background: #fff !important;
+    color: #000 !important;
+    width: 80% !important;
+    margin: 0 auto !important;
+    border-collapse: collapse !important;
+  }
+  .print-only-export th,
+  .print-only-export td {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    padding: 4px 8px !important;
+    font-weight: 400 !important;
+  }
+  .print-only-export th {
+    padding: 6px 8px !important;
+    font-weight: 600 !important;
+  }
+  /* Overall page styling */
+  html, body, main {
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
