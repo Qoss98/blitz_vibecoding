@@ -93,30 +93,56 @@ export const SchedulePage: React.FC = () => {
   const openEdit = () => setSidebarOpen(true);
 
   const applySidebar = (values: Partial<DayFields>) => {
+    // Check if any selected day has actual data (not just placeholders/empty)
+    const sel = new Set(selectedIds);
+    const hasExistingData = days.some((d) => {
+      if (!sel.has(d.id) || d.isWeekend) return false;
+      const fields = d.fields;
+      if (!fields) return false;
+      // Check if any required field has actual content (not empty string)
+      return Boolean(
+        (fields.subject && fields.subject.trim()) ||
+        (fields.modality && fields.modality.trim()) ||
+        (fields.trainer && fields.trainer.trim())
+      );
+    });
+
     setPendingApply(values);
-    setConfirmOpen(true);
+    // Only show confirmation if there's actual data to overwrite
+    if (hasExistingData) {
+      setConfirmOpen(true);
+    } else {
+      // No existing data, apply directly without confirmation
+      performApplyDirect(values);
+    }
   };
 
-  const performApply = () => {
-    if (!pendingApply) return;
+  const performApplyDirect = (values: Partial<DayFields>) => {
+    if (!values) return;
     const sel = new Set(selectedIds);
     const next = days.map((d) => {
       if (!sel.has(d.id) || d.isWeekend) return d;
       const prev = d.fields ?? ({} as DayFields);
       const merged: DayFields = {
-        subject: pendingApply.subject !== undefined ? pendingApply.subject : prev.subject ?? '',
-        modality: pendingApply.modality !== undefined ? pendingApply.modality : prev.modality ?? '',
-        trainer: pendingApply.trainer !== undefined ? pendingApply.trainer : prev.trainer ?? '',
-        shortDescription: pendingApply.shortDescription !== undefined ? pendingApply.shortDescription : prev.shortDescription,
-        notes: pendingApply.notes !== undefined ? pendingApply.notes : prev.notes,
-        customLocation: pendingApply.customLocation !== undefined ? pendingApply.customLocation : prev.customLocation,
+        subject: values.subject !== undefined ? values.subject : prev.subject ?? '',
+        modality: values.modality !== undefined ? values.modality : prev.modality ?? '',
+        trainer: values.trainer !== undefined ? values.trainer : prev.trainer ?? '',
+        shortDescription: values.shortDescription !== undefined ? values.shortDescription : prev.shortDescription,
+        notes: values.notes !== undefined ? values.notes : prev.notes,
+        customLocation: values.customLocation !== undefined ? values.customLocation : prev.customLocation,
       };
       return { ...d, fields: merged };
     });
     setDays(next);
+    setSelectedIds([]); // Deselect all days after applying changes
+    setSidebarOpen(false);
+  };
+
+  const performApply = () => {
+    if (!pendingApply) return;
+    performApplyDirect(pendingApply);
     setConfirmOpen(false);
     setPendingApply(null);
-    setSidebarOpen(false);
   };
 
   const saveAll = () => {
