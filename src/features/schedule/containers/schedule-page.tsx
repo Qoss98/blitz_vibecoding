@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { DEFAULT_TIME_LABEL } from '../../../types/schedule';
 import type { ScheduleState, TrainingDay } from '../../../types/schedule';
 import type { DayFields } from '../../../types/schedule';
@@ -298,6 +298,11 @@ export const SchedulePage: React.FC = () => {
       {/* Everything below this (in main) hidden on print! */}
       <div className="print:hidden">
         <header className="mb-6">
+          <div className="row items-center gap-4 mb-2">
+            <Link className="btn btn-ghost" to="/plans">
+              ← Terug naar Plannen
+            </Link>
+          </div>
           <h1 className="heading-xl mb-2">Trainingsprogramma</h1>
           <p className="lead">{formatDateNL(startDate)} – {formatDateNL(endDate)}</p>
         </header>
