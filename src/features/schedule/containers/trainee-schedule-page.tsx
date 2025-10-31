@@ -1,12 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import type { ScheduleState, TrainingDay } from '../../../types/schedule';
-import { formatDateNL, toIsoDate } from '../../../utils/date';
+import { useNavigate } from 'react-router-dom';
+import type { TrainingDay } from '../../../types/schedule';
+import { formatDateNL } from '../../../utils/date';
 import { loadSchedule } from '../../../lib/storage';
 import { WeekGrid } from '../components/week-grid';
 import { Modal } from '../../../components/modal';
 import { useAuth } from '../../auth/containers/auth-provider';
-import type { DayFields } from '../../../types/schedule';
 import { DEFAULT_TIME_LABEL } from '../../../types/schedule';
 
 export const TraineeSchedulePage: React.FC = () => {
@@ -218,16 +217,72 @@ export const TraineeSchedulePage: React.FC = () => {
   );
 };
 
+// Helper function to convert URLs in text to clickable links
+const linkifyText = (text: string): React.ReactNode[] => {
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  let keyCounter = 0;
+
+  while ((match = urlRegex.exec(text)) !== null) {
+    // Add text before the URL
+    if (match.index > lastIndex) {
+      parts.push(<span key={`text-${keyCounter++}`}>{text.substring(lastIndex, match.index)}</span>);
+    }
+
+    // Add the URL as a clickable link
+    let url = match[0];
+    let displayUrl = url;
+    
+    // Add https:// prefix if it starts with www.
+    if (url.toLowerCase().startsWith('www.')) {
+      url = 'https://' + url;
+      displayUrl = url;
+    }
+
+    parts.push(
+      <a
+        key={`link-${keyCounter++}`}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:text-blue-300 underline break-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {displayUrl}
+      </a>
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text after the last URL
+  if (lastIndex < text.length) {
+    parts.push(<span key={`text-${keyCounter++}`}>{text.substring(lastIndex)}</span>);
+  }
+
+  // If no URLs were found, return the original text
+  if (parts.length === 0) {
+    return [<span key="no-url">{text}</span>];
+  }
+
+  return parts;
+};
+
 // Helper component for displaying day fields
 const DayField: React.FC<{ label: string; value?: string; multiline?: boolean }> = ({ label, value, multiline }) => {
   if (!value) return null;
+  
+  const content = linkifyText(value);
+  
   return (
     <div>
       <div className="eyebrow text-gray-400">{label}</div>
       {multiline ? (
-        <div className="text-white whitespace-pre-wrap">{value}</div>
+        <div className="text-white whitespace-pre-wrap">{content}</div>
       ) : (
-        <div className="text-white">{value}</div>
+        <div className="text-white">{content}</div>
       )}
     </div>
   );
