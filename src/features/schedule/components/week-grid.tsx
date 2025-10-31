@@ -26,8 +26,8 @@ export const WeekGrid: React.FC<Props> = ({ weekDays, selectedIds, onToggleSelec
         const baseCls = d.isWeekend
           ? 'opacity-60 pointer-events-none bg-neutral-900 text-white'
           : selected
-          ? 'ring-2 ring-offset-0 ring-[var(--brand-green)]'
-          : '';
+          ? 'border-4 border-blitz shadow-xl'
+          : 'border border-transparent';
         return (
           <div
             key={d.id}

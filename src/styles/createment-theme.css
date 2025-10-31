@@ -375,4 +375,8 @@ input::placeholder, textarea::placeholder { color: var(--brand-gray-300); }
   .lead { font-size: 1.25rem; }
 }
 
+.border-blitz {
+  border-color: #0B35F4 !important;
+}
+
 

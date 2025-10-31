@@ -145,32 +145,32 @@ export const SchedulePage: React.FC = () => {
         <p className="lead">{formatDateNL(startDate)} – {formatDateNL(endDate)}</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-        <div className="col lg:col-span-3 card">
-          <div className="card-body">
-            <div className="row wrap gap-4 items-end">
-              <label className="col">
-                <span className="eyebrow">Startdatum (snapt naar eerste maandag)</span>
-                <input type="date" className="bg-black text-white border border-white/20 rounded-md p-2" value={dateInput} onChange={(e) => setDateInput(e.target.value)} />
-              </label>
-              <button className="btn btn-primary" onClick={handleGenerate}>Genereer</button>
+      {/* Start date and actions section */}
+      <div className="card mb-4">
+        <div className="card-body">
+          <div className="row wrap gap-4 items-end">
+            <label className="col">
+              <span className="eyebrow">Startdatum (snapt naar eerste maandag)</span>
+              <input type="date" className="bg-black text-white border border-white/20 rounded-md p-2" value={dateInput} onChange={(e) => setDateInput(e.target.value)} />
+            </label>
+            <button className="btn btn-primary" onClick={handleGenerate}>Genereer</button>
 
-              <button className="btn btn-ghost" onClick={openEdit} disabled={selectedIds.length === 0}>Bewerken ({selectedIds.length})</button>
-              <button className="btn btn-ghost" onClick={printWeeks}>Exporteer PDF</button>
-              <button className="btn btn-primary" onClick={saveAll}>Opslaan</button>
-            </div>
+            <button className="btn btn-ghost" onClick={openEdit} disabled={selectedIds.length === 0}>Bewerken ({selectedIds.length})</button>
+            <button className="btn btn-ghost" onClick={printWeeks}>Exporteer PDF</button>
+            <button className="btn btn-primary" onClick={saveAll}>Opslaan</button>
           </div>
         </div>
-        <div className="card">
-          <div className="card-body col">
-            <span className="eyebrow">Programma</span>
-            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Titel" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
-            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Trainee naam" value={metaTrainee} onChange={(e) => setMetaTrainee(e.target.value)} />
-            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Talent manager" value={metaManager} onChange={(e) => setMetaManager(e.target.value)} />
-            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Cohort/Batch" value={metaCohort} onChange={(e) => setMetaCohort(e.target.value)} />
-            <textarea className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Opmerkingen (optioneel)" value={metaRemarks} onChange={(e) => setMetaRemarks(e.target.value)} />
-            <div className="text-sm text-gray-300">Tijd: {DEFAULT_TIME_LABEL}</div>
-          </div>
+      </div>
+      {/* Program meta card below start section */}
+      <div className="card mb-6">
+        <div className="card-body col">
+          <span className="eyebrow">Programma</span>
+          <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Titel" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
+          <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Trainee naam" value={metaTrainee} onChange={(e) => setMetaTrainee(e.target.value)} />
+          <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Talent manager" value={metaManager} onChange={(e) => setMetaManager(e.target.value)} />
+          <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Cohort/Batch" value={metaCohort} onChange={(e) => setMetaCohort(e.target.value)} />
+          <textarea className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Opmerkingen (optioneel)" value={metaRemarks} onChange={(e) => setMetaRemarks(e.target.value)} />
+          <div className="text-sm text-gray-300">Tijd: {DEFAULT_TIME_LABEL}</div>
         </div>
       </div>
 
