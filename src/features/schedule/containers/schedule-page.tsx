@@ -262,7 +262,7 @@ export const SchedulePage: React.FC = () => {
             {/* Print-only header info */}
             <div style={{ 
               textAlign: 'center', 
-              margin: '12px 0 20px 0', 
+              margin: '12px 0 60px 0', 
               padding: '20px',
               borderRadius: '8px',
               fontSize: '1.2em', 
