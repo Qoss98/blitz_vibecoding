@@ -1,14 +1,9 @@
 import { supabase } from './client';
-import type { Program, ProgramInsert, TrainingDay, TrainingDayInsert, TalentManager } from '../../types/database';
+import type { ProgramInsert, TrainingDay, TrainingDayInsert } from '../../types/database';
 import type { DayFields, ScheduleState } from '../../types/schedule';
-import { toIsoDate, fromIsoDate, isWeekend } from '../../utils/date';
-import { fetchDutchHolidays, getHolidayName } from '../../utils/holidays';
-
-type Holiday = {
-  date: string;
-  localName: string;
-  name: string;
-};
+import { fromIsoDate, isWeekend } from '../../utils/date';
+import { fetchDutchHolidays, getHolidayName, type Holiday } from '../../utils/holidays';
+import { getManagerIdByEmail } from '@/dal/programs';
 
 // Convert database TrainingDay to app TrainingDay
 async function dbDayToAppDay(dbDay: TrainingDay, dateStr: string, holidays: { [year: number]: Holiday[] }): Promise<import('../../types/schedule').TrainingDay> {
@@ -128,15 +123,11 @@ export async function saveProgramToSupabase(state: ScheduleState): Promise<boole
   try {
     const { meta, days } = state;
 
-    // Resolve talent manager id by name (optional)
+    // Get the logged-in user's email and resolve manager ID
     let managerId: string | null = null;
-    if (meta.talentManager && meta.talentManager.trim()) {
-      const { data: mgr } = await supabase
-        .from('talent_managers')
-        .select('id')
-        .eq('name', meta.talentManager.trim())
-        .single();
-      managerId = mgr?.id ?? null;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) {
+      managerId = await getManagerIdByEmail(user.email);
     }
 
     // Check if program already exists

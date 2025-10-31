@@ -41,7 +41,10 @@ async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
 
 export const SchedulePage: React.FC = () => {
   const [metaTitle, setMetaTitle] = useState('');
-  const [metaTraineeEmail, setMetaTraineeEmail] = useState('');
+  const [metaTraineeEmail, setMetaTraineeEmail] = useState(() => {
+    const email = new URLSearchParams(window.location.search).get('traineeEmail');
+    return email ?? '';
+  });
   const [metaTraineeName, setMetaTraineeName] = useState('');
   const [metaManager, setMetaManager] = useState('');
   const [metaCohort, setMetaCohort] = useState('');

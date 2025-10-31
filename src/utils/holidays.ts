@@ -3,7 +3,7 @@ import { toIsoDate } from './date';
 
 const HOLIDAYS_API_BASE = 'https://date.nager.at/api/v3';
 
-interface Holiday {
+export interface Holiday {
   date: string; // ISO date format
   localName: string;
   name: string;
