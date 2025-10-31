@@ -260,7 +260,16 @@ export const SchedulePage: React.FC = () => {
         {weeks.map((week, idx) => (
           <section key={idx} className="print-week-page" style={{ pageBreakAfter: 'always' }}>
             {/* Print-only header info */}
-            <div style={{ textAlign: 'center', margin: '12px 0', fontSize: '1.2em', fontWeight: 600 }}>
+            <div style={{ 
+              textAlign: 'center', 
+              margin: '12px 0 20px 0', 
+              padding: '20px',
+              borderRadius: '8px',
+              fontSize: '1.2em', 
+              fontWeight: 600,
+              background: 'linear-gradient(180deg, #0B35F4 0%, #6B46C1 100%)',
+              color: '#FFFFFF'
+            }}>
               <div>Naam trainee: {metaTraineeName || '(onbekend)'}</div>
               <div>Talent manager: {metaManager || '(onbekend)'}</div>
               <div>Titel: {metaTitle || '(onbekend)'}</div>

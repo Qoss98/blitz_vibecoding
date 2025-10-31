@@ -64,6 +64,7 @@
   --bs-blue: #0d6efd;
   --bs-cyan: #0dcaf0;
   --bs-danger: #dc3545;
+  --brand-purple: #6B46C1; /* Purple for gradients */
 }
 
 /* Base resets aligning to a dark, high-contrast aesthetic */
@@ -377,6 +378,24 @@ input::placeholder, textarea::placeholder { color: var(--brand-gray-300); }
 
 .border-blitz {
   border-color: #0B35F4 !important;
+}
+
+/* Gradient background for PDF header */
+.pdf-header-gradient {
+  background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fallback for browsers that don't support gradient text */
+@supports not (background-clip: text) {
+  .pdf-header-gradient {
+    -webkit-background-clip: initial;
+    -webkit-text-fill-color: initial;
+    background-clip: initial;
+    color: var(--brand-green);
+  }
 }
 
 
