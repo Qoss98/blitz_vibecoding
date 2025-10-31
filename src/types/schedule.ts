@@ -19,6 +19,7 @@ export interface TrainingDay {
 
 export interface ProgramMeta {
   title: string;
+  traineeEmail: string;
   traineeName: string;
   startDate: string; // ISO date (snapped)
   endDate: string; // ISO date

@@ -32,7 +32,7 @@ export async function loadSchedule(traineeEmail?: string): Promise<ScheduleState
 // Main save function - tries Supabase first, falls back to localStorage
 export async function saveSchedule(state: ScheduleState): Promise<boolean> {
   // Try Supabase first if trainee email exists
-  if (state.meta.traineeName) {
+  if (state.meta.traineeEmail) {
     const success = await saveProgramToSupabase(state);
     if (success) {
       // Also save to localStorage as backup

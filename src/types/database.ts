@@ -11,6 +11,7 @@ export interface TalentManager {
 export interface Program {
   id: string;
   trainee_email: string;
+  trainee_name: string | null;
   title: string;
   talent_manager_id: string | null;
   cohort: string | null;

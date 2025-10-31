@@ -105,7 +105,8 @@ export async function loadProgramFromSupabase(traineeEmail: string): Promise<Sch
     return {
       meta: {
         title: program.title,
-        traineeName: program.trainee_email,
+        traineeEmail: program.trainee_email,
+        traineeName: program.trainee_name || '',
         startDate: program.start_date,
         endDate: program.end_date,
         talentManager: managerName,
@@ -142,7 +143,7 @@ export async function saveProgramToSupabase(state: ScheduleState): Promise<boole
     const { data: existingProgram } = await supabase
       .from('programs')
       .select('id')
-      .eq('trainee_email', meta.traineeName)
+      .eq('trainee_email', meta.traineeEmail)
       .single();
 
     let programId: string;
@@ -153,6 +154,8 @@ export async function saveProgramToSupabase(state: ScheduleState): Promise<boole
         .from('programs')
         .update({
           title: meta.title,
+          trainee_email: meta.traineeEmail,
+          trainee_name: meta.traineeName || null,
           start_date: meta.startDate,
           end_date: meta.endDate,
           talent_manager_id: managerId,
@@ -178,7 +181,8 @@ export async function saveProgramToSupabase(state: ScheduleState): Promise<boole
     } else {
       // Create new program
       const programInsert: ProgramInsert = {
-        trainee_email: meta.traineeName,
+        trainee_email: meta.traineeEmail,
+        trainee_name: meta.traineeName || null,
         title: meta.title,
         start_date: meta.startDate,
         end_date: meta.endDate,

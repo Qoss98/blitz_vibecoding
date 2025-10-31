@@ -41,7 +41,8 @@ async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
 
 export const SchedulePage: React.FC = () => {
   const [metaTitle, setMetaTitle] = useState('');
-  const [metaTrainee, setMetaTrainee] = useState('');
+  const [metaTraineeEmail, setMetaTraineeEmail] = useState('');
+  const [metaTraineeName, setMetaTraineeName] = useState('');
   const [metaManager, setMetaManager] = useState('');
   const [metaCohort, setMetaCohort] = useState('');
   const [metaRemarks, setMetaRemarks] = useState('');
@@ -55,12 +56,13 @@ export const SchedulePage: React.FC = () => {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const traineeEmail = metaTrainee || undefined;
+      const traineeEmail = metaTraineeEmail || undefined;
       const loaded = await loadSchedule(traineeEmail);
       if (loaded) {
         setDays(loaded.days);
         setMetaTitle(loaded.meta.title);
-        setMetaTrainee(loaded.meta.traineeName);
+        setMetaTraineeEmail(loaded.meta.traineeEmail);
+        setMetaTraineeName(loaded.meta.traineeName);
         setMetaManager(loaded.meta.talentManager);
         setMetaCohort(loaded.meta.cohort || '');
         setMetaRemarks(loaded.meta.remarks || '');
@@ -188,7 +190,8 @@ export const SchedulePage: React.FC = () => {
   const saveAll = async () => {
     const meta = {
       title: metaTitle,
-      traineeName: metaTrainee,
+      traineeEmail: metaTraineeEmail,
+      traineeName: metaTraineeName,
       startDate: toIsoDate(startDate),
       endDate: toIsoDate(endDate),
       talentManager: metaManager,
@@ -214,7 +217,7 @@ export const SchedulePage: React.FC = () => {
           <section key={idx} className="print-week-page" style={{ pageBreakAfter: 'always' }}>
             {/* Print-only header info */}
             <div style={{ textAlign: 'center', margin: '12px 0', fontSize: '1.2em', fontWeight: 600 }}>
-              <div>Naam trainee: {metaTrainee || '(onbekend)'}</div>
+              <div>Naam trainee: {metaTraineeName || '(onbekend)'}</div>
               <div>Talent manager: {metaManager || '(onbekend)'}</div>
               <div>Titel: {metaTitle || '(onbekend)'}</div>
             </div>
@@ -276,7 +279,8 @@ export const SchedulePage: React.FC = () => {
           <div className="card-body col">
             <span className="eyebrow">Programma</span>
             <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Titel" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} />
-            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Trainee naam" value={metaTrainee} onChange={(e) => setMetaTrainee(e.target.value)} />
+            <input type="email" className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Trainee e-mail" value={metaTraineeEmail} onChange={(e) => setMetaTraineeEmail(e.target.value)} />
+            <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Trainee naam" value={metaTraineeName} onChange={(e) => setMetaTraineeName(e.target.value)} />
             <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Talent manager" value={metaManager} onChange={(e) => setMetaManager(e.target.value)} />
             <input className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Cohort/Batch" value={metaCohort} onChange={(e) => setMetaCohort(e.target.value)} />
             <textarea className="bg-black text-white border border-white/20 rounded-md p-2" placeholder="Opmerkingen (optioneel)" value={metaRemarks} onChange={(e) => setMetaRemarks(e.target.value)} />
