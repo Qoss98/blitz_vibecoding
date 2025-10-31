@@ -268,35 +268,41 @@ export const SchedulePage: React.FC = () => {
               fontSize: '1.2em', 
               fontWeight: 600,
               background: 'linear-gradient(180deg, #0B35F4 0%, #6B46C1 100%)',
-              color: '#FFFFFF'
+              color: '#FFFFFF',
+              fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif'
             }}>
               <div>Naam trainee: {metaTraineeName || '(onbekend)'}</div>
               <div>Talent manager: {metaManager || '(onbekend)'}</div>
               <div>Titel: {metaTitle || '(onbekend)'}</div>
             </div>
             {/* Printable table, centered on page */}
-            <table style={{ background: '#fff', color: '#000', margin: '0 auto', width: '80%', borderCollapse: 'collapse', fontSize: '0.97em' }}>
+            <table style={{ background: '#fff', color: '#000', margin: '0 auto', width: '80%', borderCollapse: 'separate', borderSpacing: '0', fontSize: '0.97em', borderRadius: '8px', overflow: 'hidden', border: '4px solid #0B35F4', fontFamily: 'system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif' }}>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #000', padding: '6px 8px' }}>Datum</th>
-                  <th style={{ border: '1px solid #000', padding: '6px 8px' }}>Modus</th>
-                  <th style={{ border: '1px solid #000', padding: '6px 8px' }}>Trainer</th>
-                  <th style={{ border: '1px solid #000', padding: '6px 8px' }}>Onderwerp</th>
-                  <th style={{ border: '1px solid #000', padding: '6px 8px' }}>Tijd</th>
+                  <th style={{ border: '1px solid #0B35F4', borderTop: 'none', borderLeft: 'none', padding: '6px 8px', background: '#0B35F4', color: '#FFFFFF', fontWeight: 600 }}>Datum</th>
+                  <th style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '6px 8px', background: '#0B35F4', color: '#FFFFFF', fontWeight: 600 }}>Modus</th>
+                  <th style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '6px 8px', background: '#0B35F4', color: '#FFFFFF', fontWeight: 600 }}>Trainer</th>
+                  <th style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '6px 8px', background: '#0B35F4', color: '#FFFFFF', fontWeight: 600 }}>Onderwerp</th>
+                  <th style={{ border: '1px solid #0B35F4', borderTop: 'none', borderRight: 'none', padding: '6px 8px', background: '#0B35F4', color: '#FFFFFF', fontWeight: 600 }}>Tijd</th>
                 </tr>
               </thead>
               <tbody>
                 {week.map((day) => (
                   <tr key={day.id} style={day.isWeekend ? { background: '#e9e9e9', color: '#888' } : {}}>
-                    <td style={{ border: '1px solid #000', padding: '4px 8px', textAlign: 'center' }}>{
+                    <td style={{ border: '1px solid #0B35F4', borderTop: 'none', borderLeft: 'none', padding: '4px 8px', textAlign: 'center' }}>{
                       new Date(day.date).toLocaleDateString('nl-NL', { weekday: 'short', day: '2-digit', month: '2-digit' })
                     }</td>
-                    <td style={{ border: '1px solid #000', padding: '4px 8px' }}>{
+                    <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{
                       day.isWeekend ? (day.holidayName || 'Weekend') : (day.fields?.modality === 'Custom' ? day.fields?.customLocation : day.fields?.modality) || '—'
                     }</td>
-                    <td style={{ border: '1px solid #000', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.trainer || '—'}</td>
-                    <td style={{ border: '1px solid #000', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.subject || '—'}</td>
-                    <td style={{ border: '1px solid #000', padding: '4px 8px' }}>{day.isWeekend ? '' : '09:00–17:00'}</td>
+                    <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.trainer || '—'}</td>
+                    <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.subject || '—'}</td>
+                    <td style={{ 
+                      border: '1px solid #0B35F4', 
+                      borderTop: 'none', 
+                      borderRight: 'none', 
+                      padding: '4px 8px' 
+                    }}>{day.isWeekend ? '' : '09:00–17:00'}</td>
                   </tr>
                 ))}
               </tbody>

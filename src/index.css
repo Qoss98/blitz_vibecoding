@@ -35,28 +35,12 @@
     color: #000 !important;
     width: 80% !important;
     margin: 0 auto !important;
-    border-collapse: collapse !important;
+    border-collapse: separate !important;
   }
-  .print-only-export th,
-  .print-only-export td {
-    background: #fff !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
-    padding: 4px 8px !important;
-    font-weight: 400 !important;
-  }
-  .print-only-export th {
-    padding: 6px 8px !important;
-    font-weight: 600 !important;
-  }
+  /* Don't override inline table cell styles - they are defined in the component */
   /* Overall page styling */
   html, body, main {
     background: #fff !important;
-  }
-  /* Ensure table cells have proper colors */
-  .print-only-export table td,
-  .print-only-export table th {
-    color: #000 !important;
   }
   /* Enable color printing for gradients */
   .print-only-export {
