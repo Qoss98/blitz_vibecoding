@@ -237,6 +237,19 @@ a:hover { color: var(--brand-green); }
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
+}
+.card * {
+  cursor: inherit;
+}
+.card input,
+.card textarea,
+.card select {
+  cursor: text;
 }
 .card-body { padding: var(--sp-8); }
 .card-title { font-weight: 800; font-size: var(--fs-xl); }
