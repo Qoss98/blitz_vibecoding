@@ -6,10 +6,21 @@ import type { DayFields } from '../../types/schedule';
 export async function loadTemplates(createdById?: string): Promise<TrainingTemplate[]> {
   if (!supabase) return [];
   try {
+    // Resolve talent manager id by name (if provided)
+    let managerId: string | null = null;
+    if (createdById && createdById.trim()) {
+      const { data: mgr } = await supabase
+        .from('talent_managers')
+        .select('id')
+        .eq('name', createdById.trim())
+        .single();
+      managerId = mgr?.id ?? null;
+    }
+
     let query = supabase.from('training_templates').select('*').order('name', { ascending: true });
     
-    if (createdById) {
-      query = query.eq('created_by', createdById);
+    if (managerId) {
+      query = query.eq('created_by', managerId);
     }
 
     const { data, error } = await query;
@@ -34,6 +45,17 @@ export async function saveTemplate(
 ): Promise<TrainingTemplate | null> {
   if (!supabase) return null;
   try {
+    // Resolve talent manager id by name (if provided)
+    let managerId: string | null = null;
+    if (createdById && createdById.trim()) {
+      const { data: mgr } = await supabase
+        .from('talent_managers')
+        .select('id')
+        .eq('name', createdById.trim())
+        .single();
+      managerId = mgr?.id ?? null;
+    }
+
     const templateInsert: TrainingTemplateInsert = {
       name,
       subject: fields.subject || null,
@@ -42,7 +64,7 @@ export async function saveTemplate(
       short_description: fields.shortDescription || null,
       notes: fields.notes || null,
       custom_location: fields.customLocation || null,
-      created_by: createdById || null,
+      created_by: managerId,
     };
 
     const { data, error } = await supabase
