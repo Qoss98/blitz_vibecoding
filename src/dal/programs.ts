@@ -25,6 +25,43 @@ export async function getManagerIdByEmail(email: string): Promise<string | null>
   }
 }
 
+// Check if user is a trainee (has a program) or manager (in talent_managers table)
+export async function getUserRole(email: string): Promise<'manager' | 'trainee' | null> {
+  if (!supabase) return null;
+  try {
+    // First check if they're a manager
+    const managerId = await getManagerIdByEmail(email);
+    if (managerId) {
+      return 'manager';
+    }
+    
+    // Then check if they have a program as a trainee
+    const { data, error } = await supabase
+      .from('programs')
+      .select('id')
+      .eq('trainee_email', email)
+      .maybeSingle();
+    
+    if (error) {
+      const status = (error as any).status || (error as any).code;
+      const errorCode = error.code;
+      if (status !== 406 && errorCode !== 'PGRST116') {
+        console.error('Error checking trainee role:', error);
+      }
+      return null;
+    }
+    
+    if (data) {
+      return 'trainee';
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Exception checking user role:', error);
+    return null;
+  }
+}
+
 export async function getManagerNameByEmail(email: string): Promise<string | null> {
   if (!supabase) return null;
   try {

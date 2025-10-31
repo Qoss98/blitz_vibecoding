@@ -1,8 +1,10 @@
 import './App.css';
 import { ErrorBoundary } from './components/error-boundary';
 import { SchedulePage } from './features/schedule/containers/schedule-page';
+import { TraineeSchedulePage } from './features/schedule/containers/trainee-schedule-page';
 import { AppProviders } from './features/auth/containers/auth-provider';
 import { RequireAuth } from './features/auth/containers/require-auth';
+import { RoleGuard } from './components/role-guard';
 import { LoginPage } from './features/auth/containers/login-page';
 import { SignupPage } from './features/auth/containers/signup-page';
 import { PlansOverviewPage } from './features/plans/containers/plans-overview-page';
@@ -20,7 +22,9 @@ function App() {
               path="/plans"
               element={
                 <RequireAuth>
-                  <PlansOverviewPage />
+                  <RoleGuard allowedRoles={['manager']}>
+                    <PlansOverviewPage />
+                  </RoleGuard>
                 </RequireAuth>
               }
             />
@@ -28,7 +32,9 @@ function App() {
               path="/schedule"
               element={
                 <RequireAuth>
-                  <SchedulePage />
+                  <RoleGuard allowedRoles={['manager']}>
+                    <SchedulePage />
+                  </RoleGuard>
                 </RequireAuth>
               }
             />
@@ -36,11 +42,23 @@ function App() {
               path="/schedule/new"
               element={
                 <RequireAuth>
-                  <SchedulePage />
+                  <RoleGuard allowedRoles={['manager']}>
+                    <SchedulePage />
+                  </RoleGuard>
                 </RequireAuth>
               }
             />
-            <Route path="*" element={<Navigate to="/plans" replace />} />
+            <Route
+              path="/my-schedule"
+              element={
+                <RequireAuth>
+                  <RoleGuard allowedRoles={['trainee']}>
+                    <TraineeSchedulePage />
+                  </RoleGuard>
+                </RequireAuth>
+              }
+            />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>

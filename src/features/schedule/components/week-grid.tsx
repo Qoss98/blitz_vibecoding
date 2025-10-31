@@ -6,17 +6,28 @@ type Props = {
   weekDays: TrainingDay[]; // length 7 if full week range
   selectedIds: string[];
   onToggleSelect: (id: string, withRange: boolean, multi: boolean) => void;
+  readOnly?: boolean;
+  onDayDoubleClick?: (day: TrainingDay) => void;
 };
 
-export const WeekGrid: React.FC<Props> = ({ weekDays, selectedIds, onToggleSelect }) => {
+export const WeekGrid: React.FC<Props> = ({ weekDays, selectedIds, onToggleSelect, readOnly = false, onDayDoubleClick }) => {
   const handleClick = useCallback(
     (e: React.MouseEvent, id: string, isWeekend: boolean) => {
-      if (isWeekend) return;
+      if (isWeekend || readOnly) return;
       const withRange = e.shiftKey;
       const multi = e.metaKey || e.ctrlKey;
       onToggleSelect(id, withRange, multi);
     },
-    [onToggleSelect]
+    [onToggleSelect, readOnly]
+  );
+
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent, day: TrainingDay) => {
+      if (readOnly && onDayDoubleClick && !day.isWeekend) {
+        onDayDoubleClick(day);
+      }
+    },
+    [readOnly, onDayDoubleClick]
   );
 
   return (
@@ -34,6 +45,7 @@ export const WeekGrid: React.FC<Props> = ({ weekDays, selectedIds, onToggleSelec
             className={`card p-3 min-h-40 ${baseCls}`}
             role="button"
             onClick={(e) => handleClick(e, d.id, d.isWeekend)}
+            onDoubleClick={(e) => handleDoubleClick(e, d)}
           >
             <div className="text-sm font-semibold mb-2">
               {formatDateNL(new Date(d.date), { weekday: 'short', day: '2-digit', month: '2-digit' })}

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { getCurrentUser, signOut as dalSignOut } from '@/dal/auth';
-import { ensureTalentManagerExists } from '@/dal/programs';
+import { ensureTalentManagerExists, getUserRole } from '@/dal/programs';
 
 type AuthContextValue = {
   user: { id: string; email: string } | null;
@@ -35,10 +35,6 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
     // Initial load
     getCurrentUser().then(async (u) => {
       if (mounted) {
-        // Ensure talent_manager exists for logged-in user
-        if (u?.email) {
-          await ensureTalentManagerExists(u.email);
-        }
         setUser(u);
         setLoading(false);
       }
@@ -49,9 +45,14 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       if (!mounted) return;
       const u = await getCurrentUser();
       
-      // If user just signed in, ensure talent_manager record exists
+      // Create manager record on first login (only for managers, not trainees)
       if (event === 'SIGNED_IN' && u?.email) {
-        await ensureTalentManagerExists(u.email);
+        const role = await getUserRole(u.email);
+        // If user is not a trainee, they might be a new manager signing up
+        // Try to ensure manager record exists (this will only create if it doesn't exist)
+        if (role !== 'trainee') {
+          await ensureTalentManagerExists(u.email);
+        }
       }
       
       setUser(u);

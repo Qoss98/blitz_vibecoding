@@ -56,11 +56,8 @@ export async function signUpWithEmailPassword(email: string, password: string, _
       throw authError;
     }
     
-    // Don't create talent_manager during signup - let ensureTalentManagerExists handle it on first login
-    // This avoids race conditions and duplicate key errors (409)
-    // The ensureTalentManagerExists function will create it when user first logs in
-    // Note: _name parameter is not used here but kept for API consistency
-    // In the future, we could store it somewhere to use during manager creation
+    // Note: Manager creation will happen automatically when user logs in
+    // via ensureTalentManagerExists in auth-provider
     
     return authData.session ?? null;
   } catch (error: any) {
@@ -70,5 +67,14 @@ export async function signUpWithEmailPassword(email: string, password: string, _
     }
     throw new Error('Registratie mislukt. Probeer het opnieuw.');
   }
+}
+
+// Magic link sign-in for trainees (passwordless)
+export async function signInWithMagicLink(email: string) {
+  if (!supabase) throw new Error('Supabase not configured');
+  const { error } = await supabase.auth.signInWithOtp({ email });
+  if (error) throw error;
+  // Magic link sends email, no session returned immediately
+  return null;
 }
 
