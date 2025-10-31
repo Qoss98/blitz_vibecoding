@@ -6,7 +6,7 @@ import { useAuth } from '@/features/auth/containers/auth-provider';
 
 function ProgramRow({ p }: { p: Program }) {
   return (
-    <li className="row justify-between items-center border border-white/10 rounded-lg p-3">
+    <li className="card row justify-between items-center p-3">
       <div className="col">
         <div className="font-semibold">{p.title}</div>
         <div className="text-sm text-gray-400">
@@ -69,7 +69,7 @@ export function PlansOverviewPage() {
           <p className="text-sm text-gray-400">Ingelogd als {user?.email}</p>
         </div>
         <div className="row gap-2">
-          <Link className="btn btn-primary" to="/schedule/new">
+          <Link className="btn btn-ghost" to="/schedule/new">
             Nieuw programma
           </Link>
           <button className="btn btn-ghost" onClick={handleSignOut}>

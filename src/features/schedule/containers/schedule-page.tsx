@@ -355,13 +355,8 @@ export const SchedulePage: React.FC = () => {
               <button className="btn btn-primary" onClick={saveAll}>Opslaan</button>
               {hasExistingSchedule && (
                 <button 
-                  className="btn" 
+                  className="btn btn-danger" 
                   onClick={() => setDeleteConfirmOpen(true)}
-                  style={{ 
-                    background: '#dc2626', 
-                    color: '#ffffff',
-                    border: '1px solid #dc2626'
-                  }}
                 >
                   Verwijderen
                 </button>
@@ -453,13 +448,8 @@ export const SchedulePage: React.FC = () => {
             <>
               <button className="btn btn-ghost" onClick={() => setDeleteConfirmOpen(false)}>Annuleren</button>
               <button 
-                className="btn" 
+                className="btn btn-danger" 
                 onClick={handleDelete}
-                style={{ 
-                  background: '#dc2626', 
-                  color: '#ffffff',
-                  border: '1px solid #dc2626'
-                }}
               >
                 Verwijderen
               </button>

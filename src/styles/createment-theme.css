@@ -69,11 +69,13 @@
 
 /* Base resets aligning to a dark, high-contrast aesthetic */
 html, body {
-  background-color: var(--brand-black);
+  background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-purple) 100%);
+  background-attachment: fixed;
   color: var(--brand-white);
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 /* Typography: bold, confident, all-caps accents with generous tracking */
@@ -205,12 +207,25 @@ a:hover { color: var(--brand-green); }
 }
 .btn-primary:hover { background: var(--brand-green-600); }
 
+.btn-danger {
+  background: #dc2626;
+  color: var(--brand-white);
+  border: 1px solid #dc2626;
+}
+.btn-danger:hover { 
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--brand-white);
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
-.btn-ghost:hover { border-color: rgba(255, 255, 255, 0.3); }
+.btn-ghost:hover { 
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--brand-white);
+}
 
 /* Cards */
 .card {
