@@ -311,7 +311,7 @@ export const SchedulePage: React.FC = () => {
                       new Date(day.date).toLocaleDateString('nl-NL', { weekday: 'short', day: '2-digit', month: '2-digit' })
                     }</td>
                     <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{
-                      day.isWeekend ? (day.holidayName || 'Weekend') : (day.fields?.modality === 'Custom' ? day.fields?.customLocation : day.fields?.modality) || '—'
+                      day.isWeekend ? (day.holidayName || 'Weekend') : (day.fields?.modality === 'Custom' ? 'externe locatie' : day.fields?.modality) || '—'
                     }</td>
                     <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.trainer || '—'}</td>
                     <td style={{ border: '1px solid #0B35F4', borderTop: 'none', padding: '4px 8px' }}>{day.isWeekend ? '' : day.fields?.subject || '—'}</td>
