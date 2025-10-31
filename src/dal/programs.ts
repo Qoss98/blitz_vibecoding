@@ -24,6 +24,29 @@ export async function getManagerIdByEmail(email: string): Promise<string | null>
   }
 }
 
+export async function getManagerNameByEmail(email: string): Promise<string | null> {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('talent_managers')
+      .select('name')
+      .eq('email', email)
+      .single();
+    if (error) {
+      // Don't log 406 errors (Not Acceptable) - these might happen during logout
+      const status = (error as any).status || (error as any).code;
+      if (status !== 406) {
+        console.error('Error getting manager name:', error);
+      }
+      return null;
+    }
+    return data?.name ?? null;
+  } catch (error) {
+    console.error('Exception getting manager name:', error);
+    return null;
+  }
+}
+
 export async function listProgramsForManager(managerId: string): Promise<Program[]> {
   if (!supabase) return [];
   try {

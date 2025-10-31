@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { DEFAULT_TIME_LABEL } from '../../../types/schedule';
 import type { ScheduleState, TrainingDay } from '../../../types/schedule';
 import type { DayFields } from '../../../types/schedule';
@@ -9,6 +10,8 @@ import { WeekGrid } from '../components/week-grid';
 import { SidebarPanel } from '../components/sidebar-panel';
 import { TemplatesManager } from '../components/templates-manager';
 import { Modal } from '../../../components/modal';
+import { useAuth } from '../../auth/containers/auth-provider';
+import { getManagerNameByEmail } from '../../../dal/programs';
 
 async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
   const startMonday = firstMondayOfMonth(start);
@@ -40,11 +43,11 @@ async function buildInitialDays(start: Date): Promise<TrainingDay[]> {
 }
 
 export const SchedulePage: React.FC = () => {
+  const location = useLocation();
+  const { user } = useAuth();
+  
   const [metaTitle, setMetaTitle] = useState('');
-  const [metaTraineeEmail, setMetaTraineeEmail] = useState(() => {
-    const email = new URLSearchParams(window.location.search).get('traineeEmail');
-    return email ?? '';
-  });
+  const [metaTraineeEmail, setMetaTraineeEmail] = useState('');
   const [metaTraineeName, setMetaTraineeName] = useState('');
   const [metaManager, setMetaManager] = useState('');
   const [metaCohort, setMetaCohort] = useState('');
@@ -59,7 +62,45 @@ export const SchedulePage: React.FC = () => {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const traineeEmail = metaTraineeEmail || undefined;
+      const isNew = location.pathname === '/schedule/new';
+      
+      // If it's a new schedule, initialize with empty fields and pre-fill manager name
+      if (isNew) {
+        // Clear all fields
+        setMetaTitle('');
+        setMetaTraineeEmail('');
+        setMetaTraineeName('');
+        setMetaCohort('');
+        setMetaRemarks('');
+        
+        // Pre-fill manager name from logged-in user
+        if (user?.email) {
+          const managerName = await getManagerNameByEmail(user.email);
+          if (managerName) {
+            setMetaManager(managerName);
+          } else {
+            setMetaManager('');
+          }
+        } else {
+          setMetaManager('');
+        }
+        
+        // Initialize with empty days
+        const now = new Date();
+        const initialDays = await buildInitialDays(now);
+        setDays(initialDays);
+        setIsLoading(false);
+        return;
+      }
+      
+      // Otherwise, try to load existing schedule
+      const emailFromUrl = new URLSearchParams(window.location.search).get('traineeEmail');
+      const traineeEmail = emailFromUrl || undefined;
+      
+      if (traineeEmail) {
+        setMetaTraineeEmail(traineeEmail);
+      }
+      
       const loaded = await loadSchedule(traineeEmail);
       if (loaded) {
         setDays(loaded.days);
@@ -78,7 +119,7 @@ export const SchedulePage: React.FC = () => {
       setIsLoading(false);
     }
     load();
-  }, []); // Only run on mount
+  }, [location.pathname, user?.email]); // Use location.pathname and user.email as dependencies
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const lastSelectedRef = useRef<string | null>(null);
