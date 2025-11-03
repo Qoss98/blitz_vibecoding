@@ -12,7 +12,8 @@ A modern React boilerplate project designed to help you quickly start building c
   - [Step 3: Clone This Project](#step-3-clone-this-project)
   - [Step 4: Install Node.js](#step-4-install-nodejs)
   - [Step 5: Install Dependencies](#step-5-install-dependencies)
-  - [Step 6: Start Development](#step-6-start-development)
+  - [Step 6: Connect to Database (Optional)](#step-6-connect-to-database-optional)
+  - [Step 7: Start Development](#step-7-start-development)
 - [Working Effectively with Cursor](#working-effectively-with-cursor)
 - [Setting Up Supabase MCP](#setting-up-supabase-mcp)
 - [Project Structure](#project-structure)
@@ -83,7 +84,29 @@ npm install
 
 > **Note:** All npm commands work identically on Windows, macOS, and Linux. This project is fully cross-platform compatible.
 
-### Step 6: Start Development
+### Step 6: Connect to Database (Optional)
+
+This project works with or without a database:
+
+**Option 1: Use the Shared Database (Easiest)**
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+The `.env.example` file already contains pre-configured database credentials. Your app will automatically connect to the shared Supabase database.
+
+**Option 2: Use Your Own Database**
+
+If you want to use your own Supabase project, follow the instructions in [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
+
+**Option 3: Work Without Database**
+
+The app will automatically fall back to localStorage if no database is configured. You can skip this step entirely!
+
+### Step 7: Start Development
 
 ```bash
 npm run dev
