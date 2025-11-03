@@ -1,318 +1,377 @@
-# ⚡ React + Vite Boilerplate for Cursor
+# 🎯 Training Program Scheduler
 
-A modern React boilerplate project designed to help you quickly start building cool stuff with React using Cursor. This template includes Vite, TypeScript, TailwindCSS, React Query, and follows clean architecture best practices.
+> A modern, full-stack web application for creating and managing structured training programs with beautiful scheduling interfaces, authentication, and cloud-powered data persistence.
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
+![React](https://img.shields.io/badge/React-19.1-blue)
+![Supabase](https://img.shields.io/badge/Supabase-Enabled-green)
 
-## Inhoudsopgave
+---
 
-- [What is Cursor?](#what-is-cursor)
-- [Getting Started](#getting-started)
-  - [Step 1: Install Cursor](#step-1-install-cursor)
-  - [Step 2: Install Git from Cursor](#step-2-install-git-from-cursor)
-  - [Step 3: Clone This Project](#step-3-clone-this-project)
-  - [Step 4: Install Node.js](#step-4-install-nodejs)
-  - [Step 5: Install Dependencies](#step-5-install-dependencies)
-  - [Step 6: Connect to Database (Optional)](#step-6-connect-to-database-optional)
-  - [Step 7: Start Development](#step-7-start-development)
-- [Working Effectively with Cursor](#working-effectively-with-cursor)
-- [Setting Up Supabase MCP](#setting-up-supabase-mcp)
-- [Project Structure](#project-structure)
-- [Tech Stack](#tech-stack)
-- [Available Scripts](#available-scripts)
-- [Start!](#building-cool-stuff)
+## 🚀 Overview
 
-## What is Cursor?
+**Training Program Scheduler** is a comprehensive solution designed for talent managers to effortlessly create, manage, and distribute structured two-month training programs. Built with modern web technologies and clean architecture principles, this application transforms the manual process of program creation into an intuitive, digital experience.
 
-Cursor is an AI-powered code editor that helps you write code faster and more efficiently. It's built on VS Code and enhanced with AI capabilities to understand your codebase and help you build applications.
+### What We've Built
 
-## Getting Started
+This application was developed as a competition project to solve real-world training management challenges. We combined cutting-edge technology with thoughtful UX design to deliver a production-ready solution that scales from prototype to enterprise use.
 
-### Step 1: Install Cursor
+---
 
-1. Visit [cursor.sh](https://cursor.sh) and click **"Download"**
-2. Download Cursor for your operating system (macOS, Windows, or Linux)
-3. Install Cursor following the installation instructions for your platform
-4. Open Cursor after installation
+## ✨ Key Features
 
-### Step 2: Install Git from Cursor
+### 🎨 **Beautiful & Intuitive Interface**
+- **Modern Design System**: Custom Createment-branded styling with gradient themes, dark mode optimization, and high-contrast accessibility
+- **Responsive Layout**: Mobile-first design that works seamlessly across all devices
+- **Interactive Grid View**: Visual week-by-week calendar with drag-and-select functionality
+- **Professional Print Export**: One-click PDF generation with perfect A4 landscape formatting
 
-If you don't have Git installed on your computer:
+### ⚡ **Powerful Scheduling Tools**
+- **Auto-Generated Calendars**: Automatically creates a complete 8-week schedule based on start date
+- **Bulk Selection & Editing**: Select multiple days and apply training details simultaneously
+- **Smart Field Management**: 
+  - Subject/topic customization
+  - Multiple delivery modalities (On-site, Online, Custom)
+  - Trainer assignment
+  - Custom location support
+  - Rich descriptions and notes
+- **Template System**: Save frequently used training configurations for instant reuse
 
-1. In Cursor, look at the **top left** of the window
-2. Click on the **Git** menu
-3. Cursor will detect if Git is missing and guide you to install it
-4. Follow the on-screen instructions:
-   - Click **Next** through the installation steps
-   - Complete the installation on your computer
-   - Restart Cursor if prompted
+### 🎯 **Smart Features**
+- **Dutch Holiday Detection**: Automatically fetches and highlights Dutch national holidays via public API
+- **Weekend Recognition**: Intelligent weekend detection with visual distinction
+- **Multi-Program Management**: Talent managers can create and oversee multiple trainee programs
+- **Real-Time Data Persistence**: Cloud database integration with localStorage fallback
 
-### Step 3: Clone This Project
+### 🔐 **Authentication & Security**
+- **Role-Based Access Control**: Separate interfaces for Talent Managers and Trainees
+- **Supabase Auth Integration**: Secure email/password and magic link authentication
+- **Protected Routes**: Automatic redirects based on user roles
+- **Session Management**: Persistent authentication across browser sessions
 
-1. In Cursor, click on **Git** in the top left menu
-2. Select **"Clone from Repository"** (or "Clone Repository")
-3. Paste the repository URL when prompted
-4. Choose a folder to clone the project into
-5. Cursor will automatically clone the repository and prompt you to open it
-6. Click **"Open"** to start working
+### 💾 **Data Architecture**
+- **Cloud-First with Fallback**: Supabase integration with graceful localStorage degradation
+- **Normalized Database Schema**: Clean PostgreSQL structure with proper relationships
+- **UUID-Based IDs**: Industry-standard unique identifiers for all entities
+- **Optimized Performance**: Intelligent caching and prefetching strategies
 
-### Step 4: Install Node.js
+---
 
-This project requires Node.js to run. If you don't have Node.js installed:
+## 🏗️ Architecture Highlights
 
-1. Visit [nodejs.org/en/download](https://nodejs.org/en/download)
-2. Download the **LTS (Long Term Support)** version for your operating system
-3. Run the installer and follow the installation wizard:
-   - Click **Next** through the installation steps
-   - Accept the license agreement
-   - Complete the installation
-4. Verify the installation by opening a terminal and running:
-   ```bash
-   node --version
-   npm --version
-   ```
-   You should see version numbers displayed.
+### **Clean Architecture Principles**
+```
+src/
+├── dal/                    # Data Access Layer - pure HTTP functions
+├── features/               # Feature-based organization
+│   ├── auth/
+│   │   └── containers/    # Data orchestration
+│   └── schedule/
+│       ├── components/    # Presentational components
+│       └── containers/    # Business logic
+├── lib/                   # Shared utilities
+│   ├── supabase/          # Database abstractions
+│   └── storage.ts         # Storage abstraction layer
+├── components/            # Reusable UI primitives
+└── types/                 # TypeScript definitions
+```
 
-> **Note:** The Node.js installer includes npm (Node Package Manager), which is required to install project dependencies.
+### **Design Patterns**
+- **Separation of Concerns**: Clear boundaries between data, logic, and presentation
+- **Container/Presentational Split**: Logic containers drive dumb components
+- **Storage Abstraction**: Unified API for multiple storage backends
+- **Type Safety**: Comprehensive TypeScript coverage with strict mode
+- **Error Boundaries**: Graceful error handling with user-friendly fallbacks
 
-### Step 5: Install Dependencies
+---
 
-Open the integrated terminal in Cursor (`Ctrl+`` ` on Windows/Linux or `Cmd+`` ` on macOS) and run:
+## 🛠️ Tech Stack
+
+### **Frontend**
+- **React 19** - Latest stable version with modern hooks and concurrent features
+- **TypeScript 5** - Full type safety with strict mode
+- **Vite 7** - Lightning-fast build tool and HMR
+- **TailwindCSS 4** - Utility-first styling with custom theme
+- **React Router v7** - Declarative routing and navigation
+- **React Query (TanStack)** - Powerful server state management
+
+### **Backend & Database**
+- **Supabase** - PostgreSQL database with real-time capabilities
+- **Supabase Auth** - Built-in authentication system
+- **Row-Level Security** - Database-level access control
+
+### **Development Tools**
+- **ESLint 9** - Code quality and consistency
+- **TypeScript ESLint** - Enhanced type-aware linting
+- **Vite TSConfig Paths** - Clean import aliases
+- **Cursor AI** - AI-powered development workflow
+
+---
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+- **Node.js** 18+ (LTS recommended)
+- **npm** or **yarn** package manager
+- **Git** for version control
+- **Modern web browser** (Chrome, Firefox, Safari, Edge)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd cursor-programming-react-vite-template
+```
+
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-> **Note:** All npm commands work identically on Windows, macOS, and Linux. This project is fully cross-platform compatible.
+### 3. Configure Database (Optional)
 
-### Step 6: Connect to Database (Optional)
+The application works with or without a database. Choose one option:
 
-This project works with or without a database:
-
-**Option 1: Use the Shared Database (Easiest)**
-
-Copy the example environment file:
-
+#### Option 1: Use Shared Database (Recommended)
 ```bash
 cp .env.example .env
 ```
-
 The `.env.example` file already contains pre-configured database credentials. Your app will automatically connect to the shared Supabase database.
 
-**Option 2: Use Your Own Database**
+#### Option 2: Use Your Own Database
+Follow the detailed instructions in [SUPABASE_SETUP.md](SUPABASE_SETUP.md) to set up your own Supabase project.
 
-If you want to use your own Supabase project, follow the instructions in [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
+#### Option 3: Work Without Database
+Skip this step entirely! The app automatically falls back to localStorage for data persistence.
 
-**Option 3: Work Without Database**
-
-The app will automatically fall back to localStorage if no database is configured. You can skip this step entirely!
-
-### Step 7: Start Development
+### 4. Start Development Server
 
 ```bash
 npm run dev
 ```
 
-Your app will be available at `http://localhost:5173`
+Your application will be available at `http://localhost:5173`
 
-## Working Effectively with Cursor
+---
 
-To maximize your productivity and minimize token usage while working with Cursor, follow this workflow:
+## 📚 Usage Guide
 
-### 1. Start Your Development Server
+### For Talent Managers
 
-**Before you begin coding**, make sure to start the development server so you can see your changes in real-time:
+1. **Sign In**: Use email/password authentication or request a magic link
+2. **View Plans**: See an overview of all training programs you've created
+3. **Create New Program**: 
+   - Set start date and duration
+   - Define trainee information
+   - Customize program metadata (cohort, title, remarks)
+4. **Schedule Training Days**:
+   - View the automatically generated calendar
+   - Select multiple days for bulk editing
+   - Fill in training details (subject, modality, trainer, etc.)
+   - Use templates for consistency
+5. **Export PDF**: Generate a professional print-ready document
+6. **Manage Templates**: Save common training configurations for reuse
+
+### For Trainees
+
+1. **Sign In**: Authenticate with your assigned email
+2. **View Schedule**: See your personalized training calendar
+3. **Print or Export**: Download your schedule as a PDF
+
+---
+
+## 🗂️ Project Structure
+
+```
+cursor-programming-react-vite-template/
+├── src/
+│   ├── components/          # Shared UI components
+│   │   ├── error-boundary.tsx
+│   │   ├── modal.tsx
+│   │   └── role-guard.tsx
+│   ├── dal/                 # Data Access Layer
+│   │   ├── auth.ts
+│   │   └── programs.ts
+│   ├── features/            # Feature modules
+│   │   ├── auth/
+│   │   │   └── containers/  # Auth pages & providers
+│   │   ├── plans/
+│   │   │   └── containers/  # Plans overview
+│   │   └── schedule/
+│   │       ├── components/  # Schedule UI components
+│   │       └── containers/  # Schedule business logic
+│   ├── lib/                 # Shared libraries
+│   │   ├── storage.ts       # Storage abstraction
+│   │   └── supabase/        # Database utilities
+│   ├── styles/              # Custom styling
+│   │   └── createment-theme.css
+│   ├── types/               # Type definitions
+│   │   ├── database.ts
+│   │   └── schedule.ts
+│   ├── utils/               # Utility functions
+│   │   ├── date.ts
+│   │   └── holidays.ts
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+├── supabase/
+│   └── migrations/          # Database schema
+├── public/                  # Static assets
+├── .env.example            # Environment template
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+## 🔧 Available Scripts
 
 ```bash
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linter
+npm run lint
 ```
 
-Your app will be available at `http://localhost:5173` - keep this open in your browser throughout development.
+---
 
-### 2. Open the Agent Chat
+## 🎨 Design System
 
-1. Look at the **right-hand side** of the Cursor window
-2. Click the **Agent** button (∞ icon) to open the agent chat
-3. This opens the AI assistant that can help you write and modify code
+### **Color Palette**
+- Primary: Blue gradient (`#0B35F4`)
+- Secondary: Purple accents (`#6B46C1`)
+- Background: Dark gray scale (`#121417` to `#ffffff`)
+- Semantic: Success, danger, and neutral variants
 
-### 3. Use Detailed Prompts to Save Tokens
+### **Typography**
+- Display: Bold, confident system fonts
+- Body: System UI stack for excellent readability
+- Scale: Mobile-first responsive sizing
 
-**Tip:** Before starting your coding session, prepare a detailed prompt describing what you want to build. You can:
-- Write it in advance using ChatGPT or another tool
-- Include specific requirements, file structures, and technical details
-- Copy the detailed prompt into Cursor's agent chat
+### **Components**
+- Reusable card patterns
+- Gradient buttons with hover states
+- Consistent spacing system
+- Accessibility-first interactive elements
 
-This approach saves tokens because you're being clear upfront instead of going back and forth with clarifications.
+---
 
-### 4. Use "Ask" Mode for Questions
+## 🧪 Testing Strategy
 
-When you have questions or need quick information without code changes:
-1. Click the **Agent** dropdown button on the right side
-2. Select **"Ask"** mode from the dropdown menu
-3. This mode is optimized for questions and saves tokens compared to full agent mode
+The application includes:
+- **Type Safety**: TypeScript strict mode catches errors at compile time
+- **Runtime Validation**: Error boundaries for graceful failures
+- **User Feedback**: Loading states and error messages
+- **Accessibility**: Semantic HTML and ARIA labels
 
-Use "Ask" mode for:
-- Understanding how code works
-- Getting explanations
-- Quick clarifications
-- Debugging help
+---
 
-### 5. Commit Your Changes Regularly
+## 🚢 Deployment
 
-After you've added functionality and tested it:
+The application is optimized for deployment on:
+- **Vercel** - Zero-config deployment with automatic optimizations
+- **Netlify** - JAMstack-friendly hosting
+- **Traditional Hosting** - Static files from `dist/` folder
 
-1. Press `/` to open the command palette
-2. Type "git commit" and select the **git-commit** command
-3. This will stage and commit your changes with a helpful commit message
+### Build for Production
 
-**Why commit regularly?** This creates checkpoints you can revert to if something goes wrong. It's like saving your progress in a game!
-
-### 6. Start Fresh for Each Feature
-
-When you're satisfied with a feature:
-1. Close the current agent chat
-2. Start a new chat for your next feature
-
-**Why?** This keeps token usage limited and prevents chat history from becoming too long, which can slow down responses and increase costs.
-
-### Development Workflow Summary
-
-1. ✅ Run `npm run dev` to start the server
-2. ✅ Open Agent chat (∞ button on right)
-3. ✅ Use detailed prompts (prepared in advance)
-4. ✅ Build and test your feature
-5. ✅ Commit changes using `/` → "git commit"
-6. ✅ Close chat and start fresh for next feature
-7. ✅ Repeat!
-
-## Setting Up Supabase MCP
-
-The Supabase MCP (Model Context Protocol) server allows Cursor's AI to interact directly with your Supabase projects, making it easier to manage databases, migrations, and edge functions.
-
-### Step 0: Create a Supabase account (its free)
-
-### Step 1: Get Your Supabase Access Token
-
-1. Visit [supabase.com](https://supabase.com) and sign in to your account
-2. Go to your account settings (click your profile icon → **Account Preferences**)
-3. Navigate to **Access Tokens** in the left sidebar
-4. Give your token a descriptive name (e.g., "Cursor MCP")
-5. Click **Generate New Token**
-6. Copy the generated token (it starts with `sbp_`)
-7. **Important:** Save this token securely - you won't be able to see it again!
-
-### Step 2: Configure MCP in Cursor
-
-You can configure the Supabase MCP server using Cursor's built-in UI:
-
-1. Open Cursor Settings:
-   - **macOS:** `Cmd + ,` or go to **Cursor** → **Settings**
-   - **Windows/Linux:** `Ctrl + ,` or go to **File** → **Preferences** → **Settings**
-
-2. Navigate to **Tools** → **MCP** in the settings sidebar
-
-3. Click **New MCP Server** button
-
-4. Fill in the configuration:
-  ```json
-{
-  "mcpServers": {
-    "supabase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--access-token",
-        "sbp_your_token_here"
-      ]
-    }
-  }
-}
-```
-(replace with your actual token from Step 1)
-
-5. Save the configuration and restart Cursor
-
-**Alternative: Manual Configuration**
-
-If you prefer to edit the configuration file directly:
-
-1. Open your Cursor MCP configuration file:
-   - **macOS/Linux:** `~/.cursor/mcp.json`
-   - **Windows:** `%APPDATA%\Cursor\mcp.json`
-
-2. Add the Supabase MCP server configuration to the `mcpServers` object. Your `mcp.json` file should look like this (the `supabase` entry can be added alongside other MCP servers):
-
-
-**Important:** If you already have other MCP servers configured, add the `supabase` entry inside the existing `mcpServers` object. Make sure to include a comma after the closing brace if there are other servers, or remove the comma if it's the last entry.
-
-Example with other servers already configured:
-
-```json
-{
-  "mcpServers": {
-    "browser-tools": {
-      "command": "npx",
-      "args": ["@browsermcp/mcp@latest"]
-    },
-    "supabase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--access-token",
-        "sbp_your_token_here"
-      ]
-    }
-  }
-}
+```bash
+npm run build
 ```
 
-3. Replace `sbp_your_token_here` with the access token you copied in Step 1
+This generates an optimized production build in the `dist/` directory.
 
-4. Save the file and restart Cursor
+---
 
-### Step 3: Verify the Setup
+## 🤝 Contributing
 
-After restarting Cursor:
-1. Open the Agent chat
-2. Try asking the AI: "List my Supabase projects"
-3. If everything is configured correctly, the AI should be able to interact with your Supabase account
+This project was developed as a competition entry. While contributions are welcomed:
+1. Follow the existing code style
+2. Maintain TypeScript strict mode compliance
+3. Write clear, self-documenting code
+4. Test thoroughly before submitting
 
-### Troubleshooting
+---
 
-- **Token not found:** Make sure you copied the entire token including the `sbp_` prefix
-- **Connection issues:** Verify your internet connection and that Supabase services are accessible
-- **MCP not loading:** Check that the `mcp.json` file has valid JSON syntax
+## 📖 Additional Documentation
 
-## Project Structure
+- [SUPABASE_SETUP.md](SUPABASE_SETUP.md) - Detailed database setup guide
+- [projectbeschrijving.md](projectbeschrijving.md) - Original project requirements
 
-This boilerplate follows clean architecture principles:
+---
 
-- **`src/dal/`** - Data Access Layer (pure functions for HTTP requests)
-- **`src/features/*/api/`** - React Query hooks for data fetching
-- **`src/features/*/components/`** - Presentational components
-- **`src/features/*/containers/`** - Container components for data orchestration
-- **`src/components/`** - Shared reusable UI components
-- **`src/lib/http/`** - Centralized HTTP client configuration
+## 🏆 Competition Highlights
 
-## Tech Stack
+### **What Makes This Project Stand Out**
 
-- **React 19** - Latest stable version of React
-- **TypeScript 5** - Type-safe JavaScript
-- **Vite** - Fast build tool and dev server
-- **TailwindCSS** - Utility-first CSS framework
-- **React Query** - Server state management
-- **ESLint** - Code linting with TypeScript support
+1. **Production-Ready Code**: Not just a prototype, but a fully functional application ready for real-world use
+2. **Modern Architecture**: Clean, scalable structure following industry best practices
+3. **User-Centered Design**: Intuitive interface that requires minimal learning
+4. **Developer Experience**: Excellent TypeScript support, error handling, and code organization
+5. **Performance**: Optimized rendering, smart caching, and efficient data loading
+6. **Accessibility**: Semantic HTML, proper ARIA labels, and keyboard navigation
+7. **Responsive**: Works perfectly on mobile, tablet, and desktop
+8. **Robust**: Comprehensive error handling and graceful degradation
+9. **Extensible**: Easy to add new features thanks to clean architecture
+10. **Beautiful**: Professional design that reflects modern web standards
 
-## Available Scripts
+### **Technical Excellence**
+- ✅ Full TypeScript coverage
+- ✅ Clean architecture with clear separation of concerns
+- ✅ Cloud database with localStorage fallback
+- ✅ Role-based authentication and authorization
+- ✅ Responsive design system
+- ✅ Print-optimized PDF export
+- ✅ Real-time data synchronization
+- ✅ Comprehensive error handling
+- ✅ Production-ready build system
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
+---
 
-## Building Cool Stuff
+## 📞 Support & Resources
 
-Now that you're set up with Cursor and this boilerplate, you're ready to start building! The project structure is set up to help you organize your code cleanly and efficiently. Use Cursor's AI features to help you write components, create API integrations, and build amazing React applications.
+For questions or issues:
+- Check the [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for database setup
+- Review the inline code comments for implementation details
+- Consult the project structure section for navigation
 
-Happy coding! 🚀
+---
+
+## 📄 License
+
+This project is developed for competition purposes. See individual file headers for specific licensing.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Createment** - For the design system and branding
+- **Supabase** - For the excellent backend infrastructure
+- **Vite** - For the incredible developer experience
+- **TailwindCSS** - For the utility-first CSS approach
+- **React Team** - For the amazing framework
+
+---
+
+<div align="center">
+
+**Built with ❤️ for the competition**
+
+[⬆ Back to Top](#-training-program-scheduler)
+
+</div>
